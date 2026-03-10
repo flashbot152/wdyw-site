@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["2XTKQ45AY4.com.flashjellis.whatdoyouwant"],
+        "components": [
+          {
+            "/": "/join/*",
+            "comment": "Session join links"
+          }
+        ]
+      }
+    ]
+  }
+}
