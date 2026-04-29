@@ -5,16 +5,12 @@
         "appIDs": ["2XTKQ45AY4.com.flashjellis.whatdoyouwant"],
         "components": [
           {
+            "/": "/join/*",
+            "comment": "Session join links"
+          },
+          {
             "/": "/invite/*",
             "comment": "Session invite links"
-          },
-          {
-            "/": "/session/*",
-            "comment": "Session links"
-          },
-          {
-            "/": "/*",
-            "comment": "Catch-all for universal links"
           }
         ]
       }
