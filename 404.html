@@ -133,13 +133,33 @@
     (function() {
       var APP_STORE = 'https://apps.apple.com/app/id6761072597';
 
+      var params = new URLSearchParams(window.location.search);
+      var ref = params.get('ref');
+
+      // Stash referrer for attribution
+      if (ref) {
+        try { localStorage.setItem('wdyw_referrer', ref); } catch(e) {}
+      }
+
+      // Handle /download path — redirect to App Store
+      if (window.location.pathname.match(/^\/download\/?$/i)) {
+        if (ref) {
+          // Try to open the app first (already installed)
+          window.location = 'wdyw://invite?ref=' + ref;
+        }
+        // Fallback: redirect to App Store after short delay
+        setTimeout(function() {
+          window.location = APP_STORE;
+        }, ref ? 1500 : 0);
+        return;
+      }
+
       // Extract code from path like /join/ABC123
       var pathMatch = window.location.pathname.match(/\/join\/([A-Za-z0-9]+)/i);
       var code = pathMatch ? pathMatch[1].toUpperCase() : null;
 
       // Also check query param fallback
       if (!code) {
-        var params = new URLSearchParams(window.location.search);
         code = params.get('code');
         if (code) code = code.toUpperCase();
       }
@@ -150,7 +170,7 @@
         try { localStorage.setItem('wdyw_join_code', code); } catch(e) {}
 
         // Try custom scheme to open the app directly
-        var appUrl = 'wdyw://join/' + code;
+        var appUrl = 'wdyw://join/' + code + (ref ? '?ref=' + ref : '');
         var timeout = setTimeout(function() {
           // App didn't open — stay on page, user sees download button
         }, 1500);

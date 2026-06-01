@@ -134,10 +134,16 @@
       var APP_STORE = 'https://apps.apple.com/app/id6761072597';
       var params = new URLSearchParams(window.location.search);
       var code = params.get('code');
+      var ref = params.get('ref');
 
       // Also support /join/CODE path
       var pathMatch = window.location.pathname.match(/\/join\/([A-Za-z0-9]+)/);
       if (!code && pathMatch) code = pathMatch[1];
+
+      // Stash referrer for attribution after install
+      if (ref) {
+        try { localStorage.setItem('wdyw_referrer', ref); } catch(e) {}
+      }
 
       if (code) {
         code = code.toUpperCase();
@@ -149,7 +155,7 @@
         // If the app isn't installed, iOS will stay on this page
         // The user sees the code + download button as fallback
         // Try custom scheme to open the app directly
-        var appUrl = 'wdyw://join/' + code;
+        var appUrl = 'wdyw://join/' + code + (ref ? '?ref=' + ref : '');
         var timeout = setTimeout(function() {
           // App didn't open — user doesn't have it, show the page as-is
         }, 1500);
