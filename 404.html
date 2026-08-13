@@ -154,23 +154,30 @@
         return;
       }
 
-      // Extract code from path like /join/ABC123
-      var pathMatch = window.location.pathname.match(/\/join\/([A-Za-z0-9]+)/i);
-      var code = pathMatch ? pathMatch[1].toUpperCase() : null;
+      // Detect path type
+      var joinMatch = window.location.pathname.match(/\/join\/([A-Za-z0-9]+)/i);
+      var inviteMatch = window.location.pathname.match(/\/invite\/([A-Za-z0-9]+)/i);
+      var isInvitePath = !!inviteMatch;
 
-      // Also check query param fallback
-      if (!code) {
-        code = params.get('code');
-        if (code) code = code.toUpperCase();
-      }
+      var code = joinMatch ? joinMatch[1].toUpperCase()
+               : inviteMatch ? inviteMatch[1].toUpperCase()
+               : (params.get('code') || '').toUpperCase() || null;
 
       if (code) {
         document.getElementById('code-display').textContent = code;
-        // Store code for after install
-        try { localStorage.setItem('wdyw_join_code', code); } catch(e) {}
 
-        // Try custom scheme to open the app directly
-        var appUrl = 'wdyw://join/' + code + (ref ? '?ref=' + ref : '');
+        if (isInvitePath) {
+          // Friend invite flow
+          document.getElementById('invite-text').textContent = "You've been invited to be friends!";
+          document.getElementById('subtitle').textContent = "Swipe on restaurants together and find where you both want to eat.";
+          try { localStorage.setItem('wdyw_invite_code', code); } catch(e) {}
+          var appUrl = 'wdyw://invite/' + code + (ref ? '?ref=' + ref : '');
+        } else {
+          // Session join flow
+          try { localStorage.setItem('wdyw_join_code', code); } catch(e) {}
+          var appUrl = 'wdyw://join/' + code + (ref ? '?ref=' + ref : '');
+        }
+
         var timeout = setTimeout(function() {
           // App didn't open — stay on page, user sees download button
         }, 1500);
