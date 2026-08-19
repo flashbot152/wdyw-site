@@ -241,9 +241,9 @@
 
   <script>
     (function () {
-      // BUG FIX: use [A-Z0-9] — match any alphanumeric chars, let server validate.
-      // Previous regex ([A-HJ-NP-Z2-9]) excluded 'O', truncating codes like NEWCODE.
-      var match = window.location.pathname.match(/\/invite\/([A-Z0-9]{4,16})/i);
+      // Generator uses unambiguous alphabet (no I,O,0,1) — parser must match exactly.
+      // Generator: ABCDEFGHJKLMNPQRSTUVWXYZ23456789 — excludes I,O,0,1 to prevent read-aloud confusion.
+      var match = window.location.pathname.match(/\/invite\/([A-HJ-NP-Z2-9]{4,12})/i);
       var code = match ? match[1].toUpperCase() : null;
 
       if (code) {
